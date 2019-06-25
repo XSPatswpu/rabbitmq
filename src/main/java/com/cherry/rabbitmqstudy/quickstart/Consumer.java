@@ -1,4 +1,4 @@
-package com.cherry.rabbitmqstudy;
+package com.cherry.rabbitmqstudy.quickstart;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
