@@ -11,7 +11,7 @@ import com.rabbitmq.client.ConnectionFactory;
 public class Producer4Topic {
 
     /*
-    猜想：主题模式中，生产者的路由规则定义具体的规则而不是模糊匹配
+    猜想：交换机为Topic模式时，生产者的路由规则定义具体的规则而不是模糊匹配
      */
 
     public static void main(String[] args) throws Exception {
