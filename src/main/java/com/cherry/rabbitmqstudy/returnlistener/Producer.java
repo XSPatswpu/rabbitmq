@@ -31,19 +31,28 @@ public class Producer {
         channel.basicPublish(exchangeName,routingKeyError,true,null,msg.getBytes());
 
         //5.returnListener
-        channel.addReturnListener(new ReturnListener() {
-            @Override
-            public void handleReturn(int replyCode, String replyText, String exchange,
-                                     String routingKey, AMQP.BasicProperties properties,
-                                     byte[] body) throws IOException {
-                System.out.println("---------handle return---------");
-                System.out.println("replyCode: " + replyCode);
-                System.out.println("replyText: " + replyText);
-                System.out.println("exchange: " + exchange);
-                System.out.println("routingKey: " + routingKey);
-                System.out.println("properties: " + properties);
-                System.out.println("body: " + new String(body));
-            }
+//        channel.addReturnListener(new ReturnListener() {
+//            @Override
+//            public void handleReturn(int replyCode, String replyText, String exchange,
+//                                     String routingKey, AMQP.BasicProperties properties,
+//                                     byte[] body) throws IOException {
+//                System.out.println("---------handle return---------");
+//                System.out.println("replyCode: " + replyCode);
+//                System.out.println("replyText: " + replyText);
+//                System.out.println("exchange: " + exchange);
+//                System.out.println("routingKey: " + routingKey);
+//                System.out.println("properties: " + properties);
+//                System.out.println("body: " + new String(body));
+//            }
+//        });
+        channel.addReturnListener((replyCode,replyText,exchange,routingKey0,properties,body) -> {
+            System.out.println("---------handle return---------");
+            System.out.println("replyCode: " + replyCode);
+            System.out.println("replyText: " + replyText);
+            System.out.println("exchange: " + exchange);
+            System.out.println("routingKey: " + routingKey0);
+            System.out.println("properties: " + properties);
+            System.out.println("body: " + new String(body));
         });
     }
 }
