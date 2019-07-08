@@ -1,4 +1,4 @@
-package com.cherry.rabbitmqstudy.limit;
+package com.cherry.rabbitmqstudy.ack;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -23,27 +23,16 @@ public class Consumer {
         Channel channel = connection.createChannel();
 
         //4.根据交换机名称和routingKey发送消息
-        String exchangeName = "test_qos_exchange";
+        String exchangeName = "test_ack_exchange";
         String exchangeType = "topic";
-        String routingKey = "qos.#";
-        String queueName = "test_qos_queue";
+        String routingKey = "ack.#";
+        String queueName = "test_ack_queue";
 
         channel.exchangeDeclare(exchangeName,exchangeType,true,false,null);
         channel.queueDeclare(queueName,true,false,false,null);
         channel.queueBind(queueName,exchangeName,routingKey);
-
-        //限流方式
-        //second、设置BasicQos方法
-        //参数prefetchCount：MQ服务端每次发送的最大消息数量N，意义为当有N个消息没有被ACK时，消费端就会阻塞
-        //但是实际测试的结果却是：消费端消费第一条消息后发送了NACK，然后继续消费了两条消息之后发送ACK之后才进入阻塞状态，
-        // 而且阻塞一定时间之后，所有消息都会被清空，该现象暂时无法理解！
-        channel.basicQos(0,1,false);
-        //first、autoAck设置为false
+        //autoAck设置为false
         channel.basicConsume(queueName,false,new MyConsumer(channel));
 
-        /*
-        值得注意的是：basicQos方法和basicConsume方法的执行顺序比较奇怪。
-        当basicQos方法后执行时，会出现比较奇怪的现象。对于此现象暂时不予理睬！
-         */
     }
 }
