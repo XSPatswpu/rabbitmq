@@ -1,4 +1,4 @@
-package com.cherry.rabbitmqstudy.ack;
+package com.cherry.rabbitmqstudy.dlx;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -27,10 +27,10 @@ public class Producer {
         Channel channel = connection.createChannel();
 
         //4.根据交换机名称和routingKey发送消息
-        String exchangeName = "test_ack_exchange";
-        String routingKey = "ack.save";
+        String exchangeName = "test_dlx_exchange";
+        String routingKey = "dlx.save";
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 1; i++) {
             Map<String,Object> headers = new HashMap<>();
             headers.put("num",i);
 
@@ -38,11 +38,11 @@ public class Producer {
             AMQP.BasicProperties props = new AMQP.BasicProperties().builder()
                     .deliveryMode(1) //设置消息投递的模式
                     .contentEncoding("UTF-8")
-                    .expiration("5000")
+                    .expiration("10000")
                     .headers(headers)
                     .build();
 
-            String msg = "hello rabbitMQ ACK Message! " + i;
+            String msg = "hello rabbitMQ DLX Message! " + i;
             channel.basicPublish(exchangeName,routingKey,props,msg.getBytes());
         }
 

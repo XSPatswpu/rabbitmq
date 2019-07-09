@@ -1,8 +1,11 @@
-package com.cherry.rabbitmqstudy.ack;
+package com.cherry.rabbitmqstudy.dlx;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Auther: cherry
@@ -23,14 +26,24 @@ public class Consumer {
         Channel channel = connection.createChannel();
 
         //4.根据交换机名称和routingKey发送消息
-        String exchangeName = "test_ack_exchange";
+        String exchangeName = "test_dlx_exchange";
         String exchangeType = "topic";
-        String routingKey = "ack.#";
-        String queueName = "test_ack_queue";
+        String routingKey = "dlx.#";
+        String queueName = "test_dlx_queue";
 
         channel.exchangeDeclare(exchangeName,exchangeType,true,false,null);
-        channel.queueDeclare(queueName,true,false,false,null);
+
+        //在声明的队列上设置arguments参数
+        Map<String,Object> arguments = new HashMap<>();
+        arguments.put("x-dead-letter-exchange","dlx.exchange");
+        channel.queueDeclare(queueName,true,false,false,arguments);
         channel.queueBind(queueName,exchangeName,routingKey);
+
+        //进行死信队列的声明和绑定
+        channel.exchangeDeclare("dlx.exchange","topic",true,false,null);
+        channel.queueDeclare("dlx.queue",true,false,false,null);
+        channel.queueBind("dlx.queue","dlx.exchange","#");
+
         //autoAck设置为false
         channel.basicConsume(queueName,false,new MyConsumer(channel));
 
