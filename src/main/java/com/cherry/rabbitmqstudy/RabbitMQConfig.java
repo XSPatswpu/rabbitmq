@@ -7,6 +7,7 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ public class RabbitMQConfig {
     @Bean
     public ConnectionFactory connectionFactory(){
         CachingConnectionFactory cachingConnectionFactory = new CachingConnectionFactory();
-        cachingConnectionFactory.setAddresses("192.168.0.102:5672");
+        cachingConnectionFactory.setAddresses("192.168.0.101:5672");
         cachingConnectionFactory.setUsername("guest");
         cachingConnectionFactory.setPassword("guest");
         cachingConnectionFactory.setVirtualHost("/");
@@ -67,5 +68,11 @@ public class RabbitMQConfig {
     public Binding binding02(){
         return BindingBuilder.bind(queue02()).to(exchange01()).with("rabbit.#");
     }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory){
+        return new RabbitTemplate(connectionFactory);
+    }
+
 
 }

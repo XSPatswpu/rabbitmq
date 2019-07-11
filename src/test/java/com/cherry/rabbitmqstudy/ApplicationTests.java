@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -47,5 +48,30 @@ public class ApplicationTests {
         //清空队列
 //        rabbitAdmin.purgeQueue("dlx.queue",false);
     }
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Test
+    public void testRabbitTemplate01(){
+        MessageProperties messageProperties = new MessageProperties();
+        messageProperties.getHeaders().put("key01","测试属性01");
+        messageProperties.getHeaders().put("key02","测试属性02");
+        Message message = new Message("测试rabbitTemplat消息".getBytes(),messageProperties);
+
+        rabbitTemplate.convertAndSend("topic_exchange01","spring.abc",message);
+    }
+
+    @Test
+    public void testRabbitTemplate02(){
+        MessageProperties messageProperties = new MessageProperties();
+        messageProperties.setContentType("text/plain");
+        Message message = new Message("Hello rabbitMQ 001".getBytes(),messageProperties);
+        rabbitTemplate.send("topic_exchange01","spring.abc",message);
+        rabbitTemplate.convertAndSend("topic_exchange01","spring.save","Hello rabbitMQ 002");
+        rabbitTemplate.convertAndSend("topic_exchange01","rabbit.abc","Hello rabbitMQ 003");
+
+    }
+
 
 }
