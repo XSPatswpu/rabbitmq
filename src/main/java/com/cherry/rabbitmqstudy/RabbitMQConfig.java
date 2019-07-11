@@ -1,16 +1,16 @@
 package com.cherry.rabbitmqstudy;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.UUID;
 
 /**
  * @Auther: cherry
@@ -75,4 +75,29 @@ public class RabbitMQConfig {
     }
 
 
+    /*
+    从MessageListenerContainer的API中可得出，该类主要充当的角色是消费者。
+     */
+    @Bean
+    public SimpleMessageListenerContainer messageContainer(ConnectionFactory connectionFactory){
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer(connectionFactory);
+        //设置监听的队列
+        container.setQueues(queue01(),queue02());
+        //设置当前消费者数量
+        container.setConcurrentConsumers(1);
+        //设置最大消费者数量
+        container.setMaxConcurrentConsumers(5);
+        //设置是否重回队列
+        container.setDefaultRequeueRejected(false);
+        //设置签收模式
+        container.setAcknowledgeMode(AcknowledgeMode.AUTO);
+        //设置消费者的标签生成策略
+        container.setConsumerTagStrategy(queue -> queue + "_" + UUID.randomUUID());
+
+        container.setMessageListener((message) -> {
+            String msg = new String(message.getBody());
+            System.out.println("----消费者：" + msg);
+        });
+        return container;
+    }
 }
