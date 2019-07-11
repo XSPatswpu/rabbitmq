@@ -68,12 +68,9 @@ public class ApplicationTests {
         messageProperties.setContentType("text/plain");
         Message message = new Message("Hello rabbitMQ 001".getBytes(),messageProperties);
         rabbitTemplate.send("topic_exchange01","spring.abc",message);
-        rabbitTemplate.convertAndSend("topic_exchange01","spring.save","Hello rabbitMQ 002");
-        rabbitTemplate.convertAndSend("topic_exchange01","rabbit.abc","Hello rabbitMQ 003");
+//        rabbitTemplate.convertAndSend("topic_exchange01","spring.save","Hello rabbitMQ 002");
+        rabbitTemplate.convertAndSend("topic_exchange01","rabbit.abc","Hello rabbitMQ 002");
 
     }
-
-
-
 
 }

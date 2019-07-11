@@ -1,15 +1,20 @@
 package com.cherry.rabbitmqstudy;
 
+import com.cherry.rabbitmqstudy.adapter.MessageDelegate;
+import com.cherry.rabbitmqstudy.convert.TextMessageConverter;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -94,10 +99,32 @@ public class RabbitMQConfig {
         //设置消费者的标签生成策略
         container.setConsumerTagStrategy(queue -> queue + "_" + UUID.randomUUID());
 
+        /*
         container.setMessageListener((message) -> {
             String msg = new String(message.getBody());
             System.out.println("----消费者：" + msg);
         });
+        */
+
+        /*
+        //1.适配器方式一
+        MessageListenerAdapter adapter = new MessageListenerAdapter(new MessageDelegate());
+        //修改默认的方法名为自定义的方法名称
+        adapter.setDefaultListenerMethod("consumerMessage");
+        //定义消息的转换Convert
+        adapter.setMessageConverter(new TextMessageConverter());
+        //消费者开始监听消息
+        container.setMessageListener(adapter);
+        */
+
+        //2.适配器方式二：队列名称和方法名称也可以一一的匹配
+        MessageListenerAdapter adapter = new MessageListenerAdapter(new MessageDelegate());
+        Map<String,String> queueToMethod = new HashMap<>();
+        queueToMethod.put("queue01","consumerMessage01");
+        queueToMethod.put("queue02","consumerMessage02");
+        adapter.setQueueOrTagToMethodName(queueToMethod);
+        adapter.setMessageConverter(new TextMessageConverter());
+        container.setMessageListener(adapter);
         return container;
     }
 }
