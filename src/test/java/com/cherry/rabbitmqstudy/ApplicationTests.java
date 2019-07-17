@@ -57,19 +57,21 @@ public class ApplicationTests {
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.getHeaders().put("key01","测试属性01");
         messageProperties.getHeaders().put("key02","测试属性02");
-        Message message = new Message("测试rabbitTemplat消息".getBytes(),messageProperties);
+        Message message = new Message("测试rabbitTemplate消息".getBytes(),messageProperties);
 
         rabbitTemplate.convertAndSend("topic_exchange01","spring.abc",message);
     }
 
     @Test
     public void testRabbitTemplate02(){
+        /*
+        设置contentType为text/plain，会使得消息发送的时候默认为String而不是字节数组
+         */
         MessageProperties messageProperties = new MessageProperties();
         messageProperties.setContentType("text/plain");
         Message message = new Message("Hello rabbitMQ 001".getBytes(),messageProperties);
-        rabbitTemplate.send("topic_exchange01","spring.abc",message);
-//        rabbitTemplate.convertAndSend("topic_exchange01","spring.save","Hello rabbitMQ 002");
-        rabbitTemplate.convertAndSend("topic_exchange01","rabbit.abc","Hello rabbitMQ 002");
+        rabbitTemplate.convertAndSend("topic_exchange01","spring.abc",message);
+//        rabbitTemplate.convertAndSend("topic_exchange01","rabbit.abc","Hello rabbitMQ 002");
 
     }
 
