@@ -1,2 +1,0 @@
-# rabbitMQ
-rabbitMQ in action
