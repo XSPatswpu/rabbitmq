@@ -5,6 +5,9 @@ HELP.md
 !**/src/main/**
 !**/src/test/**
 
+### Mac ###
+*.DS_Store
+
 ### STS ###
 .apt_generated
 .classpath
