@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF">
+
+    <properties>
+        <property name="SERVICE_NAME">ScenicUserService</property>
+    </properties>
+
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%p] %d{yyyy-MM-dd HH:mm:ss} - %m%n"/>
+        </Console>
+        <RollingFile name="common" fileName="logs/common.log"
+                     filePattern="logs/common.log_%d{yyyy-MM-dd}">
+            <PatternLayout pattern="[%p] %d{yyyy-MM-dd HH:mm:ss} - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="error" fileName="logs/error.log"
+                     filePattern="logs/error.log_%d{yyyy-MM-dd}">
+            <PatternLayout pattern="[%p] %d{yyyy-MM-dd HH:mm:ss} - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+
+    </appenders>
+
+    <loggers>
+
+        <Logger name="common" level="debug" additivity="true">
+            <AppenderRef ref="common" level="debug"/>
+        </Logger>
+
+        <Logger name="error" level="debug" additivity="false">
+            <AppenderRef ref="error" level="debug"/>
+        </Logger>
+
+        <root level="debug">
+            <appender-ref ref="Console"/>
+        </root>
+    </loggers>
+
+</configuration>
