@@ -6,7 +6,7 @@ HELP.md
 !**/src/test/**
 
 ### Mac ###
-**/.DS_Store
+*/.DS_Store
 
 ### STS ###
 .apt_generated
